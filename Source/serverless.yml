@@ -1,0 +1,254 @@
+service: clash-api
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+frameworkVersion: "2"
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: us-east-2
+  role: arn:aws:iam::301732051001:role/RoleLambdaDynamoDBAccess
+  apiGateway:
+    metrics: true
+  tags:
+    project: ClashTeam
+    year: 2020
+
+functions:
+  create-request:
+    name: create-request
+    handler: Requests/create.handler
+    environment:
+      TABLE: Requests
+    events:
+      - http:
+          path: /requests
+          method: POST
+          authorizer:
+            name: token-authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - Authorization
+  get-requests:
+    name: get-requests
+    handler: Requests/get.handler
+    environment:
+      TABLE: Requests
+    events:
+      - http:
+          path: /requests/{id+}
+          method: GET
+          authorizer:
+            name: token-authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
+          cors:
+            origin: "*"
+            headers:
+              - Authorization
+  update-request:
+    name: update-request
+    handler: Requests/update.handler
+    environment:
+      TABLE: Requests
+    events:
+      - http:
+          path: /requests/{id+}
+          method: PUT
+          authorizer:
+            name: token-authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - Authorization
+  delete-request:
+    name: delete-request
+    handler: Requests/delete.handler
+    environment:
+      TABLE: Requests
+    events:
+      - http:
+          path: /requests/{id+}
+          method: DELETE
+          authorizer:
+            name: token-authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
+          cors:
+            origin: "*"
+            headers:
+              - Authorization
+  create-team:
+    name: create-team
+    handler: Teams/create.handler
+    environment:
+      TABLE: Teams
+    events:
+      - http:
+          path: /teams
+          method: POST
+          authorizer:
+            name: token-authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - Authorization
+  get-teams:
+    name: get-teams
+    handler: Teams/get.handler
+    environment:
+      TABLE: Teams
+    events:
+      - http:
+          path: /teams
+          method: GET
+          authorizer:
+            name: token-authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - Authorization
+  get-teams-byOwnerId:
+    name: get-teams-byOwnerId
+    handler: Teams/get-byID.handler
+    environment:
+      TABLE: Teams
+    events:
+      - http:
+          path: /teams/{id+}
+          method: GET
+          authorizer:
+            name: token-authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
+          cors:
+            origin: "*"
+            headers:
+              - Authorization
+  get-teams-by-id:
+    name: get-teams-by-id
+    handler: Teams/get-by-team-id.handler
+    environment:
+      TABLE: Teams
+    events:
+      - http:
+          path: /team/{id+}
+          method: GET
+          authorizer:
+            name: token-authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
+          cors:
+            origin: "*"
+            headers:
+              - Authorization
+  update-team:
+    name: update-team
+    handler: Teams/update.handler
+    environment:
+      TABLE: Teams
+    events:
+      - http:
+          path: /teams/{id+}
+          method: PUT
+          authorizer:
+            name: token-authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - Authorization
+  delete-team:
+    name: delete-team
+    handler: Teams/delete.handler
+    environment:
+      TABLE: Teams
+    events:
+      - http:
+          path: /teams/{id+}
+          method: DELETE
+          authorizer:
+            name: token-authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
+          cors:
+            origin: "*"
+            headers:
+              - Authorization
+  translate-text:
+    name: translate-text
+    handler: Translate/translate.handler
+    events:
+      - http:
+          path: /translate
+          method: POST
+          authorizer:
+            name: token-authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
+          cors:
+            origin: "*"
+            headers:
+              - Content-Type
+              - Authorization
+  leagues-redis:
+    name: leagues-redis
+    handler: Redis/redis.handler
+    environment:
+      REDIS_URL: redis://clash-redis.pglqln.0001.use2.cache.amazonaws.com:6379
+    events:
+      - http:
+          path: /leagues
+          method: GET
+          authorizer:
+            name: token-authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
+          cors:
+            origin: "*"
+            headers:
+              - Authorization
+    vpc:
+      securityGroupIds:
+        - sg-06a8fd98abf44fe2d
+      subnetIds:
+        - subnet-06ff7d0525e636cc3
+        - subnet-0fdfe26cfb6325ce4
+        - subnet-09812f3d7ffad9e39
+  token-authorizer:
+    name: token-authorizer
+    handler: Authorizer/authorizer.handler
+    environment:
+      TOKEN: "8105c63e-2445-11eb-adc1-0242ac120002"
