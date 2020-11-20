@@ -30,7 +30,7 @@ La documentación de la API REST puede ser consultada en el siguiente enlace:
 # ARQUITECTURA GENERAL
 
 Se presenta la arquitectura general de la aplicación web Clash 2020, incluyendo componentes de backend y frontend, arquitectura cloud en Amazon:
-! [Arquitectura Cloud - Clash App 2020][architecture]
+![Arquitectura Cloud - Clash App 2020][architecture]
 
 [architecture]: https://i.ibb.co/YyzX5vk/Architecture-Clash-App.png "Arquitectura Cloud Clash App"
 
